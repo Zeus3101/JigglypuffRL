@@ -19,7 +19,6 @@ class Trainer(ABC):
     Base Trainer class. To be inherited specific usecases.
 
     :param agent: Algorithm object
-    :param env: Standard gym environment
     :param logger: Logger object
     :param buffer: Buffer Object
     :param off_policy: Is the algorithm off-policy?
@@ -37,7 +36,6 @@ False (To be implemented)
     :param seed: Set seed for reproducibility
     :param deterministic_actions: Take deterministic actions during training.
     :type agent: object
-    :type env: object
     :type logger: object
     :type buffer: object
     :type off_policy: bool
@@ -58,7 +56,6 @@ False (To be implemented)
     def __init__(
         self,
         agent: Any,
-        env: Union[gym.Env, Type[venv]],
         log_mode: List[str] = ["stdout"],
         buffer: Union[Type[ReplayBuffer], Type[PrioritizedBuffer]] = None,
         off_policy: bool = False,
@@ -80,7 +77,7 @@ False (To be implemented)
         history_length: int = 4,
     ):
         self.agent = agent
-        self.env = env
+        self.env = agent.env
         self.log_mode = log_mode
         self.logdir = logdir
         self.off_policy = off_policy
@@ -153,8 +150,8 @@ get important model hyperparams.
                     print(
                         "Evaluated for {} episodes, Mean Reward: {}, Std Deviation for the Reward: {}".format(
                             self.evaluate_episodes,
-                            np.around(np.mean(ep_rews), decimals=4),
-                            np.around(np.std(ep_rews), decimals=4),
+                            round(np.mean(ep_rews), 4),
+                            round(np.std(ep_rews), 4),
                         )
                     )
                     break
@@ -172,7 +169,6 @@ class OffPolicyTrainer(Trainer):
     Off-Policy Trainer class
 
     :param agent: Algorithm object
-    :param env: Standard gym environment
     :param logger: Logger object
     :param buffer: Buffer Object. Cannot be None for Off-policy
     :param off_policy: Is the algorithm off-policy?
@@ -195,7 +191,6 @@ with randomly sampled actions to store in buffer.
 many steps
     :param update_interval: Update model policies after number of steps.
     :type agent: object
-    :type env: object
     :type logger: object
     :type buffer: object
     :type off_policy: bool
@@ -219,7 +214,6 @@ many steps
     def __init__(
         self,
         agent: Any,
-        env: Union[gym.Env, venv],
         log_mode: List[str] = ["stdout"],
         buffer: Union[Type[ReplayBuffer], Type[PrioritizedBuffer]] = None,
         off_policy: bool = True,
@@ -243,7 +237,6 @@ many steps
     ):
         super(OffPolicyTrainer, self).__init__(
             agent,
-            env,
             log_mode,
             buffer,
             off_policy,
@@ -399,7 +392,6 @@ class OnPolicyTrainer(Trainer):
     Base Trainer class. To be inherited specific usecases.
 
     :param agent: Algorithm object
-    :param env: Standard gym environment
     :param logger: Logger Object
     :param buffer: Buffer Object
     :param off_policy: Is the algorithm off-policy?
@@ -417,7 +409,6 @@ class OnPolicyTrainer(Trainer):
     :param seed: Set seed for reproducibility
     :param deterministic_actions: Take deterministic actions during training.
     :type agent: object
-    :type env: object
     :type logger: object
     :type buffer: object
     :type off_policy: bool
@@ -438,7 +429,6 @@ class OnPolicyTrainer(Trainer):
     def __init__(
         self,
         agent: Any,
-        env: Union[gym.Env, venv],
         log_mode: List[str] = ["stdout"],
         save_interval: int = 0,
         render: bool = False,
@@ -457,7 +447,6 @@ class OnPolicyTrainer(Trainer):
     ):
         super(OnPolicyTrainer, self).__init__(
             agent,
-            env,
             log_mode,
             buffer=None,
             off_policy=False,
