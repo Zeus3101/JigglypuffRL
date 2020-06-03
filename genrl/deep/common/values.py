@@ -1,7 +1,8 @@
+import numpy as np
+import torch
 from .base import BaseValue
 from .utils import mlp, cnn
 from typing import Tuple, Union, Type
-import numpy as np
 
 
 def _get_val_model(
@@ -60,20 +61,20 @@ class MlpValue(BaseValue):
         self.state_dim = state_dim
         self.action_dim = action_dim
 
-        self.model = _get_val_model(mlp, val_type, state_dim, hidden, action_dim)
+        self.model = _get_val_model(
+            mlp, val_type, state_dim, hidden, action_dim
+        )
 
 
 class CNNValue(BaseValue):
     """
     CNN Value Function class
 
-    :param state_dim: State dimension of environment
     :param action_dim: Action dimension of environment
     :param framestack: Number of previous frames to stack together
     :param val_type: Specifies type of value function: \
 "V" for V(s), "Qs" for Q(s), "Qsa" for Q(s,a)
     :param hidden: Sizes of hidden layers
-    :type state_dim: int
     :type action_dim: int
     :type framestack: int
     :type val_type: string
@@ -93,12 +94,31 @@ class CNNValue(BaseValue):
 
         self.conv, output_size = cnn((framestack, 16, 32))
 
-        self.fc = _get_val_model(mlp, val_type, output_size, fc_layers, action_dim)
+        self.fc = _get_val_model(
+            mlp, val_type, output_size, fc_layers, action_dim
+        )
 
     def forward(self, state: np.ndarray) -> np.ndarray:
+        """
+        Defines the computation performed at every call.
+
+        :param state: Input to value function
+        :type state: Tensor
+        """
         state = self.conv(state)
         state = state.view(state.size(0), -1)
         state = self.fc(state)
+        return state
+
+    def get_value(self, state: torch.Tensor) -> torch.Tensor:
+        """
+        Get value from value function based on input
+
+        :param state: Input to value function
+        :type state: Tensor
+        :returns: Value
+        """
+        state = self.forward(state).squeeze(-1).squeeze(-1)
         return state
 
 

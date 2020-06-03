@@ -9,11 +9,9 @@ class BasePolicy(nn.Module):
     """
     Basic implementation of a general Policy
 
-    :param state_dim: State dimensions of the environment
     :param action_dim: Action dimensions of the environment
     :param hidden: Sizes of hidden layers
     :param discrete: True if action space is discrete, else False
-    :type state_dim: int
     :type action_dim: int
     :type hidden: tuple or list
     :type discrete: bool
@@ -21,26 +19,20 @@ class BasePolicy(nn.Module):
 
     def __init__(
         self,
-        state_dim: spaces.Space,
-        action_dim: spaces.Space,
+        action_dim: int,
         hidden: Tuple,
         discrete: bool,
-        **kwargs
+        **kwargs,
     ):
         super(BasePolicy, self).__init__()
 
-        self.state_dim = state_dim
         self.action_dim = action_dim
-        self.hidden = hidden
         self.discrete = discrete
 
         self.action_lim = kwargs["action_lim"] if "action_lim" in kwargs else 1.0
         self.action_var = kwargs["action_var"] if "action_var" in kwargs else 0.1
-        self.sac = kwargs["sac"] if "sac" in kwargs else False
 
-        if self.sac:
-            self.fc_mean = nn.Linear(self.hidden[-1], self.action_dim)
-            self.fc_std = nn.Linear(self.hidden[-1], self.action_dim)
+        self.sac = kwargs["sac"] if "sac" in kwargs else False
 
         self.model = None
 
