@@ -129,8 +129,13 @@ class A2C:
                 np.zeros_like(action_dim), self.noise_std * np.ones_like(action_dim)
             )
 
+        if self.network_type == "mlp":
+            input_dim = state_dim
+        elif self.network_type == "cnn":
+            input_dim = self.env.framestack
+
         self.ac = get_model("ac", self.network_type)(
-            state_dim, action_dim, self.layers, "V", discrete, action_lim=action_lim
+            input_dim, action_dim, self.layers, "V", discrete, action_lim=action_lim
         ).to(self.device)
 
         self.actor_optimizer = opt.Adam(self.ac.actor.parameters(), lr=self.lr_actor)

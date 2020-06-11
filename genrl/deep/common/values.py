@@ -93,20 +93,18 @@ class CNNValue(BaseValue):
         self.action_dim = action_dim
 
         self.conv, output_size = cnn((framestack, 16, 32))
+        print(output_size)
 
         self.fc = _get_val_model(
             mlp, val_type, output_size, fc_layers, action_dim
         )
 
-    def forward(self, state: np.ndarray) -> np.ndarray:
-        """
-        Defines the computation performed at every call.
-
-        :param state: Input to value function
-        :type state: Tensor
-        """
+    def forward(self, state: torch.Tensor) -> torch.Tensor:
+        print("State Shape: {}".format(state.shape))
         state = self.conv(state)
+        print("Feature Shape: {}".format(state.shape))
         state = state.view(state.size(0), -1)
+        print("Flat Shape: {}".format(state.shape))
         state = self.fc(state)
         return state
 

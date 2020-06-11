@@ -1,3 +1,6 @@
+from typing import Optional, Tuple
+
+import numpy as np
 import torch
 import torch.nn as nn
 from gym import spaces
@@ -129,7 +132,7 @@ class BaseActorCritic(nn.Module):
         self.critic = None
 
     def get_action(
-        self, state: torch.Tensor, deterministic: bool = False
+        self, state: np.ndarray, deterministic: bool = False
     ) -> torch.Tensor:
         """
         Get action from the Actor based on input
@@ -144,7 +147,7 @@ else False
         state = torch.as_tensor(state).float()
         return self.actor.get_action(state, deterministic=deterministic)
 
-    def get_value(self, state: torch.Tensor) -> torch.Tensor:
+    def get_value(self, state: np.ndarray) -> torch.Tensor:
         """
         Get value from the Critic based on input
 

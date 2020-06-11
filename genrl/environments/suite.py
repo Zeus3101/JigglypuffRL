@@ -4,7 +4,51 @@ from ..environments import (
     GymWrapper, AtariPreprocessing, FrameStack, NoopReset, FireReset
 )
 
-from typing import List
+from typing import Dict
+
+
+def VectorEnv(
+    env_id: str,
+    n_envs: int = 2,
+    parallel: int = False,
+    env_type: str = "gym",
+    atari_args: Dict = {},
+) -> VecEnv:
+    """
+    Chooses the kind of Vector Environment that is required
+
+    :param env_id: Gym environment to be vectorised
+    :param n_envs: Number of environments
+    :param parallel: True if we want environments to run parallely and \
+subprocesses, False if we want environments to run serially one after the other
+    :param env_type: Type of environment. Currently, we support ['gym', 'atari']
+    :param atari_args: Arguments for AtariEnv
+    :type env_id: string
+    :type n_envs: int
+    :type parallel: False
+    :type env_type: string
+    :type atari_args: Dictionary
+    :returns: Vector Environment
+    :rtype: VecEnv
+    """
+    envs = []
+
+    for _ in range(n_envs):
+        if env_type == "atari":
+            env = AtariEnv(env_id, atari_args)
+        else:
+            env = GymEnv(env_id)
+        envs.append(env)
+
+    if parallel:
+        venv = SubProcessVecEnv(envs, n_envs)
+    else:
+        venv = SerialVecEnv(envs, n_envs)
+
+    # venv = VecNormalize(venv)
+    venv = VecFrame
+
+    return venv
 
 
 def GymEnv(env_id: str) -> gym.Env:
@@ -29,7 +73,7 @@ def AtariEnv(env_id: str, wrapper_list: List = None, **kwargs) -> gym.Env:
     :type env: string
     :type wrapper_list: list or tuple
     """
-    DEFAULT_ATARI_WRAPPERS = [AtariPreprocessing, FrameStack]
+    DEFAULT_ATARI_WRAPPERS = [AtariPreprocessing, NoopReset]
     DEFAULT_ARGS = {
         "frameskip": (2, 5),
         "grayscale": True,

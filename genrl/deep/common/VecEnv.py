@@ -5,7 +5,7 @@ import multiprocessing as mp
 from abc import ABC, abstractmethod
 
 
-def worker(parent_conn, child_conn, env):
+def worker(parent_conn: mp.Pipe, child_conn: mp.Pipe, env: gym.Env):
     """
     Worker class to facilitate multiprocessing
 
