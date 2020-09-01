@@ -2,9 +2,7 @@ from typing import List
 
 import gym
 import multiagent.scenarios as scenarios
-import numpy as np
 from multiagent.environment import MultiAgentEnv
-from torch.distributions import Categorical, Normal
 
 from genrl.environments import (
     AtariPreprocessing,
@@ -18,7 +16,10 @@ from genrl.environments.vec_env import SerialVecEnv, SubProcessVecEnv, VecEnv
 
 
 def VectorEnv(
-    env_id: str, n_envs: int = 2, parallel: int = False, env_type: str = "gym",
+    env_id: str,
+    n_envs: int = 2,
+    parallel: int = False,
+    env_type: str = "gym",
 ) -> VecEnv:
     """
         Chooses the kind of Vector Environment that is required

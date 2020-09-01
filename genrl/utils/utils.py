@@ -149,10 +149,15 @@ def get_env_properties(
     discreteness of action space and action limit (highest action value)
         :rtype: int, float, ...; int, float, ...; bool; int, float, ...
     """
+    if network == "mlpshared":
+        obs_space, action_space = env.observation_space[0], env.action_space[0]
+    else:
+        obs_space, action_space = env.observation_space, env.action_space
+
     if network == "cnn":
         state_dim = env.framestack
     elif network == "mlp":
-        state_dim = env.observation_space.shape[0]
+        state_dim = obs_space.shape[0]
     elif isinstance(network, (BasePolicy, BaseValue)):
         state_dim = network.state_dim
     elif isinstance(network, BaseActorCritic):
@@ -160,13 +165,13 @@ def get_env_properties(
     else:
         raise TypeError
 
-    if isinstance(env.action_space, gym.spaces.Discrete):
-        action_dim = env.action_space.n
+    if isinstance(action_space, gym.spaces.Discrete):
+        action_dim = action_space.n
         discrete = True
         action_lim = None
-    elif isinstance(env.action_space, gym.spaces.Box):
-        action_dim = env.action_space.shape[0]
-        action_lim = env.action_space.high[0]
+    elif isinstance(action_space, gym.spaces.Box):
+        action_dim = action_space.shape[0]
+        action_lim = action_space.high[0]
         discrete = False
     else:
         raise NotImplementedError
