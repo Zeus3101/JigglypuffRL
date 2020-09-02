@@ -23,7 +23,8 @@ class A2CAgent:
         self.gamma = gamma
         self.w = entropy_weight
 
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = "cpu"
 
         self.num_agents = self.env.n
 
@@ -52,7 +53,7 @@ class A2CAgent:
 
         self.grad_norm = None
 
-        self.rollout = PushReplayBuffer(capacity=1000)
+        # self.rollout = PushReplayBuffer(capacity=1000)
 
         self.setup_model(load_model)
 

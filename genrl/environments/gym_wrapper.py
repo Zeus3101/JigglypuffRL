@@ -53,9 +53,14 @@ serially or parallelly
 
     @property
     def action_shape(self):
-        if isinstance(self.env.action_space, gym.spaces.Box):
-            action_shape = self.env.action_space.shape
-        elif isinstance(self.env.action_space, gym.spaces.Discrete):
+        if isinstance(self.env.action_space, list):
+            action_space = self.env.action_space[0]
+        else:
+            action_space = self.env.observation_space
+
+        if isinstance(action_space, gym.spaces.Box):
+            action_shape = action_space.shape
+        elif isinstance(action_space, gym.spaces.Discrete):
             action_shape = (1,)
         return action_shape
 

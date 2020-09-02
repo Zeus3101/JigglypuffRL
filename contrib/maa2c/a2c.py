@@ -32,7 +32,7 @@ class CentralizedActorCritic(nn.Module):
         return policy, qval
 
     def get_action(self, state, device, one_hot=False):
-        state = torch.FloatTensor(state).to(device)
+        state = torch.FloatTensor(state)
         logits, _ = self.forward(state)
         if one_hot:
             logits = self.onehot_from_logits(logits)

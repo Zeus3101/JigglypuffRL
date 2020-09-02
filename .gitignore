@@ -16,3 +16,4 @@ logs/
 *.pt
 _build/
 data/
+events.out.tfevents.*

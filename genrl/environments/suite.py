@@ -13,12 +13,16 @@ from genrl.environments import (
     GymWrapper,
     NoopReset,
 )
+from genrl.environments.multi_wrapper import MultiWrapper
 from genrl.environments.time_limit import AtariTimeLimit, TimeLimit
 from genrl.environments.vec_env import SerialVecEnv, SubProcessVecEnv, VecEnv
 
 
 def VectorEnv(
-    env_id: str, n_envs: int = 2, parallel: int = False, env_type: str = "gym",
+    env_id: str,
+    n_envs: int = 2,
+    parallel: int = False,
+    env_type: str = "gym",
 ) -> VecEnv:
     """
         Chooses the kind of Vector Environment that is required
@@ -119,4 +123,4 @@ def MultiEnv(env_id: str) -> gym.Env:
         done_callback=scenario.isFinished,
     )
 
-    return GymWrapper(env)  # TODO See if TimeLimit is relevant here
+    return MultiWrapper(env)  # TODO See if TimeLimit is relevant here
